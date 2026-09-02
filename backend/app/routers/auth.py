@@ -6,6 +6,14 @@ from app.config import settings
 from app.database import get_db
 from app.models import ROLES, Pensioner
 from app.schemas import LoginRequest, LoginResponse, RegisterRequest, TokenResponse, VerifyOtpRequest
+from app.seed import (
+    build_adjustment_entries,
+    build_arrear_case_and_instalments,
+    build_benefit_entitlements,
+    build_disbursement_records,
+    build_pension_slips,
+    build_tax_documents,
+)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -32,10 +40,38 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)):
         bank_account_number=payload.bank_account_number,
         bank_ifsc=payload.bank_ifsc,
         bank_name=payload.bank_name,
+        basic_pension=payload.basic_pension,
         password_hash=hash_password(payload.password),
         role=role,
     )
     db.add(pensioner)
+    db.commit()
+    db.refresh(pensioner)
+
+    slips = build_pension_slips(pensioner.id, float(pensioner.basic_pension), pensioner.retired_from_office)
+    db.add_all(slips)
+    db.commit()
+
+    records = build_disbursement_records(pensioner.id, slips)
+    db.add_all(records)
+    db.commit()
+
+    db.add_all(build_tax_documents(pensioner.id, pensioner.retired_from_office))
+    db.commit()
+
+    case, instalments = build_arrear_case_and_instalments(
+        pensioner.id, float(pensioner.basic_pension), slips, records
+    )
+    db.add(case)
+    db.commit()
+    db.refresh(case)
+    for instalment in instalments:
+        instalment.arrear_case_id = case.id
+    db.add_all(instalments)
+    db.commit()
+
+    db.add_all(build_adjustment_entries(pensioner.id))
+    db.add_all(build_benefit_entitlements(pensioner.id, pensioner.date_of_birth))
     db.commit()
 
     return {"message": "Registration successful. You can now log in."}

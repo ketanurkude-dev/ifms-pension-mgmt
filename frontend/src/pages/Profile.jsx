@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { get } from "../api/apiService";
+import { useLanguage } from "../i18n/LanguageContext";
 import AppLayout from "./AppLayout";
 
 export default function Profile() {
+  const { t } = useLanguage();
   const [pensioner, setPensioner] = useState(null);
 
   useEffect(() => {
@@ -12,30 +14,29 @@ export default function Profile() {
   if (!pensioner) {
     return (
       <AppLayout>
-        <p className="text-slate-500 text-sm">Loading...</p>
+        <p className="text-slate-500 text-sm">{t("Loading...")}</p>
       </AppLayout>
     );
   }
 
   const fields = [
-    ["PPO number", pensioner.ppo_number],
-    ["Full name", pensioner.name],
-    ["Date of birth", pensioner.date_of_birth],
-    ["Retired from office", pensioner.retired_from_office],
-    ["Mobile", pensioner.mobile],
-    ["Email", pensioner.email || "-"],
-    ["Bank name", pensioner.bank_name],
-    ["Account number", pensioner.bank_account_number],
-    ["IFSC", pensioner.bank_ifsc],
+    [t("PPO number"), pensioner.ppo_number],
+    [t("Full name"), pensioner.name],
+    [t("Basic pension"), `Rs. ${pensioner.basic_pension}`],
+    [t("Date of birth"), pensioner.date_of_birth],
+    [t("Retired from office"), pensioner.retired_from_office],
+    [t("Mobile"), pensioner.mobile],
+    [t("Email"), pensioner.email || "-"],
+    [t("Bank name"), pensioner.bank_name],
+    [t("Account number"), pensioner.bank_account_number],
+    [t("IFSC"), pensioner.bank_ifsc],
   ];
 
   return (
     <AppLayout>
       <div className="bg-white border border-slate-200 rounded p-6">
-        <h1 className="font-semibold text-slate-800 mb-1">Profile</h1>
-        <p className="text-sm text-slate-500 mb-5">
-          Bank details can only be changed via a request &mdash; see Bank details.
-        </p>
+        <h1 className="font-semibold text-slate-800 mb-1">{t("Profile")}</h1>
+        <p className="text-sm text-slate-500 mb-5">{t("Bank details can only be changed via a request — see Bank details.")}</p>
 
         <dl className="divide-y divide-slate-100">
           {fields.map(([label, value]) => (

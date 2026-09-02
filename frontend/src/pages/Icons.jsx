@@ -39,6 +39,85 @@ export function BankIcon(props) {
   );
 }
 
+export function SlipIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="3.5" y="5.5" width="17" height="13" rx="1.5" />
+      <circle cx="12" cy="12" r="2.6" />
+      <path d="M3.5 9.5h1.5M19 9.5h1.5M3.5 14.5h1.5M19 14.5h1.5" />
+    </svg>
+  );
+}
+
+export function HistoryIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7v5l3.5 2" />
+    </svg>
+  );
+}
+
+export function TaxIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="4" y="4" width="16" height="16" rx="2" />
+      <circle cx="9" cy="9" r="1.4" />
+      <circle cx="15" cy="15" r="1.4" />
+      <path d="M16 8 8 16" />
+    </svg>
+  );
+}
+
+export function LifeCertificateIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="4.5" y="3.5" width="15" height="17" rx="1.5" />
+      <path d="M8 8h8M8 11h8M8 14h5" />
+      <path d="M9 17.5l1.8 1.8L15 15" />
+    </svg>
+  );
+}
+
+export function AnnouncementIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M4 10v4h3l5 4V6l-5 4H4z" />
+      <path d="M15.5 9.5a3.5 3.5 0 0 1 0 5" />
+      <path d="M18 7.5a6.5 6.5 0 0 1 0 9" />
+    </svg>
+  );
+}
+
+export function ArrearsIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M12 3v3M12 18v3M5 12H3M21 12h-2" />
+      <circle cx="12" cy="12" r="6.5" />
+      <path d="M12 9v3l2 1.5" />
+    </svg>
+  );
+}
+
+export function RequestsIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M6.5 3.5h8l3 3v13a1 1 0 0 1-1 1h-10a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1z" />
+      <path d="M14 3.5v3h3" />
+      <path d="M8.5 12.5h7M8.5 15.5h7M8.5 9.5h4" />
+    </svg>
+  );
+}
+
+export function GrievanceIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M5 4v16" />
+      <path d="M5 4.5h11l-2.2 3.5L16 11.5H5" />
+    </svg>
+  );
+}
+
 export function ApproverIcon(props) {
   return (
     <svg {...base} {...props}>

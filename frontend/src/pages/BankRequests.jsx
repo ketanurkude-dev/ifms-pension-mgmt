@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { get, post } from "../api/apiService";
+import { useLanguage } from "../i18n/LanguageContext";
 import AppLayout from "./AppLayout";
 import { StatusChip } from "./StatusChip";
 
 const emptyForm = { new_account_number: "", new_ifsc: "", new_bank_name: "", reason: "" };
 
 export default function BankRequests() {
+  const { t } = useLanguage();
   const [requests, setRequests] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
@@ -35,19 +37,29 @@ export default function BankRequests() {
     load();
   }
 
+  async function handleResubmit(r) {
+    await post(`/bank-requests/${r.id}/resubmit`, {
+      new_account_number: r.new_account_number,
+      new_ifsc: r.new_ifsc,
+      new_bank_name: r.new_bank_name,
+      reason: r.reason,
+    });
+    load();
+  }
+
   return (
     <AppLayout>
       <div className="space-y-6">
         <div className="bg-white border border-slate-200 rounded p-6">
-          <h1 className="font-semibold text-slate-800 mb-1">Request a bank account change</h1>
+          <h1 className="font-semibold text-slate-800 mb-1">{t("Request a bank account change")}</h1>
           <p className="text-sm text-slate-500 mb-5">
-            Your pension officer will review this before it takes effect.
+            {t("Your pension officer will review this before it takes effect.")}
           </p>
 
           <form onSubmit={handleSubmit} className="grid sm:grid-cols-2 gap-4 max-w-2xl">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5" htmlFor="new_account_number">
-                New account number
+                {t("New account number")}
               </label>
               <input
                 id="new_account_number"
@@ -59,7 +71,7 @@ export default function BankRequests() {
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5" htmlFor="new_ifsc">
-                New IFSC
+                {t("New IFSC")}
               </label>
               <input
                 id="new_ifsc"
@@ -71,7 +83,7 @@ export default function BankRequests() {
             </div>
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-slate-700 mb-1.5" htmlFor="new_bank_name">
-                New bank name
+                {t("New bank name")}
               </label>
               <input
                 id="new_bank_name"
@@ -83,7 +95,7 @@ export default function BankRequests() {
             </div>
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-slate-700 mb-1.5" htmlFor="reason">
-                Reason
+                {t("Reason")}
               </label>
               <textarea
                 id="reason"
@@ -100,28 +112,28 @@ export default function BankRequests() {
                 disabled={submitting}
                 className="bg-blue-800 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-900 disabled:opacity-60"
               >
-                {submitting ? "Submitting..." : "Submit request"}
+                {submitting ? t("Submitting...") : t("Submit request")}
               </button>
             </div>
           </form>
         </div>
 
         <div className="bg-white border border-slate-200 rounded p-6">
-          <h2 className="font-semibold text-slate-800 mb-4">My requests</h2>
+          <h2 className="font-semibold text-slate-800 mb-4">{t("My requests")}</h2>
 
           {!requests ? (
-            <p className="text-sm text-slate-500">Loading...</p>
+            <p className="text-sm text-slate-500">{t("Loading...")}</p>
           ) : requests.length === 0 ? (
-            <p className="text-sm text-slate-500">No bank change requests yet.</p>
+            <p className="text-sm text-slate-500">{t("No bank change requests yet.")}</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left text-xs uppercase tracking-wide text-slate-400 border-b border-slate-200">
-                    <th className="py-2 pr-4">New bank</th>
-                    <th className="py-2 pr-4">New account</th>
-                    <th className="py-2 pr-4">Status</th>
-                    <th className="py-2 pr-4">Raised on</th>
+                    <th className="py-2 pr-4">{t("New bank")}</th>
+                    <th className="py-2 pr-4">{t("New account")}</th>
+                    <th className="py-2 pr-4">{t("Status")}</th>
+                    <th className="py-2 pr-4">{t("Raised on")}</th>
                     <th className="py-2"></th>
                   </tr>
                 </thead>
@@ -143,7 +155,15 @@ export default function BankRequests() {
                             onClick={() => handleWithdraw(r.id)}
                             className="text-sm text-red-700 font-medium hover:text-red-800"
                           >
-                            Withdraw
+                            {t("Withdraw")}
+                          </button>
+                        )}
+                        {r.status === "Rejected" && (
+                          <button
+                            onClick={() => handleResubmit(r)}
+                            className="text-sm text-blue-800 font-medium hover:text-blue-900"
+                          >
+                            {t("Resubmit")}
                           </button>
                         )}
                       </td>

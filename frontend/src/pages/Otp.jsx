@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { post } from "../api/apiService";
+import { useLanguage } from "../i18n/LanguageContext";
 import AuthLayout from "./AuthLayout";
 
 export default function Otp() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,7 +35,7 @@ export default function Otp() {
       sessionStorage.removeItem("pending_token");
       navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.detail || "OTP verification failed");
+      setError(err.response?.data?.detail || t("OTP verification failed"));
     } finally {
       setLoading(false);
     }
@@ -41,8 +43,8 @@ export default function Otp() {
 
   return (
     <AuthLayout
-      title="Verify OTP"
-      subtitle="Enter the 6-digit code sent to your registered mobile (demo: any 6 digits work)"
+      title={t("Verify OTP")}
+      subtitle={t("Enter the 6-digit code sent to your registered mobile (demo: any 6 digits work)")}
     >
       <form onSubmit={handleSubmit}>
         {error && (
@@ -53,7 +55,7 @@ export default function Otp() {
 
         <div className="mb-6">
           <label className="block text-sm font-medium text-slate-700 mb-1.5" htmlFor="otp">
-            OTP
+            {t("OTP")}
           </label>
           <input
             id="otp"
@@ -72,7 +74,7 @@ export default function Otp() {
           disabled={loading || otp.length !== 6}
           className="w-full bg-blue-800 text-white rounded-md py-2.5 font-medium hover:bg-blue-900 transition-colors disabled:opacity-60"
         >
-          {loading ? "Verifying..." : "Verify & continue"}
+          {loading ? t("Verifying...") : t("Verify & continue")}
         </button>
       </form>
     </AuthLayout>
