@@ -13,6 +13,8 @@ import ArrearsBenefits from "./pages/ArrearsBenefits";
 import Announcements from "./pages/Announcements";
 import LifeCertificate from "./pages/LifeCertificate";
 import MyRequests from "./pages/MyRequests";
+import Reports from "./pages/Reports";
+import AuditLog from "./pages/AuditLog";
 import Approver from "./pages/Approver";
 
 function RequireAuth({ children }) {
@@ -32,6 +34,8 @@ const protectedRoutes = [
   { path: "/announcements", element: <Announcements /> },
   { path: "/life-certificate", element: <LifeCertificate /> },
   { path: "/my-requests", element: <MyRequests /> },
+  { path: "/reports", element: <Reports /> },
+  { path: "/audit-log", element: <AuditLog /> },
   { path: "/approver", element: <Approver /> },
 ];
 

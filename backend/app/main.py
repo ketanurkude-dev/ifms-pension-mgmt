@@ -10,6 +10,7 @@ from app.routers import (
     announcements,
     approver,
     arrears,
+    audit,
     auth,
     bank_requests,
     dashboard,
@@ -17,6 +18,7 @@ from app.routers import (
     grievances,
     life_certificate,
     pension,
+    reports,
     requests,
     tax,
 )
@@ -112,6 +114,8 @@ app.include_router(requests.router)
 app.include_router(arrears.router)
 app.include_router(announcements.router)
 app.include_router(life_certificate.router)
+app.include_router(reports.router)
+app.include_router(audit.router)
 
 
 @app.get("/")

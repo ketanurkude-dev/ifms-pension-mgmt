@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.auth import require_approver
 from app.database import get_db
+from app.events import log_action
 from app.models import BankChangeRequest, BenefitClaimRequest, Pensioner
 from app.schemas import ApproverQueueItem, ReviewRequest
 
@@ -30,7 +31,11 @@ def get_queue(
                 item_type="bank_request",
                 pensioner_id=req.pensioner_id,
                 pensioner_name=pensioner.name if pensioner else "Unknown",
+                ppo_number=pensioner.ppo_number if pensioner else None,
                 title=f"Bank account change: {req.new_bank_name}",
+                description=req.reason,
+                new_account_number=req.new_account_number,
+                new_ifsc=req.new_ifsc,
                 status=req.status,
                 server_date=req.server_date,
             )
@@ -48,7 +53,10 @@ def get_queue(
                 item_type="benefit_claim",
                 pensioner_id=claim.pensioner_id,
                 pensioner_name=pensioner.name if pensioner else "Unknown",
+                ppo_number=pensioner.ppo_number if pensioner else None,
                 title=f"Benefit claim: {claim.benefit_type}",
+                description=claim.details,
+                due_date=claim.due_date,
                 status=claim.status,
                 server_date=claim.server_date,
             )
@@ -76,6 +84,7 @@ def review_benefit_claim(
     claim.reviewed_by = approver.id
     claim.review_remarks = payload.review_remarks
     claim.reviewed_at = datetime.utcnow()
+    log_action(db, pensioner_id=claim.pensioner_id, actor_id=approver.id, actor_role=approver.role, action=f"Benefit claim {payload.status.lower()}", entity_type="BenefitClaimRequest", entity_id=claim.id, after_value=payload.status, details=payload.review_remarks)
     db.commit()
     return {"message": f"Benefit claim {payload.status.lower()}"}
 
@@ -107,5 +116,6 @@ def review_bank_request(
         pensioner.bank_ifsc = request.new_ifsc
         pensioner.bank_name = request.new_bank_name
 
+    log_action(db, pensioner_id=request.pensioner_id, actor_id=approver.id, actor_role=approver.role, action=f"Bank change {payload.status.lower()}", entity_type="BankChangeRequest", entity_id=request.id, after_value=payload.status, details=payload.review_remarks)
     db.commit()
     return {"message": f"Bank change request {payload.status.lower()}"}

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_pensioner
 from app.database import get_db
+from app.events import log_action
 from app.models import BankChangeRequest, Pensioner
 from app.schemas import BankChangeRequestCreate, BankChangeRequestOut
 
@@ -66,6 +67,8 @@ def create_request(
     db.add(request)
     db.commit()
     db.refresh(request)
+    log_action(db, pensioner_id=pensioner.id, actor_id=pensioner.id, actor_role=pensioner.role, action="Bank change requested", entity_type="BankChangeRequest", entity_id=request.id)
+    db.commit()
     return _to_out(request)
 
 
@@ -88,6 +91,8 @@ def withdraw_request(
     request.status = "Withdrawn"
     db.commit()
     db.refresh(request)
+    log_action(db, pensioner_id=pensioner.id, actor_id=pensioner.id, actor_role=pensioner.role, action="Bank change withdrawn", entity_type="BankChangeRequest", entity_id=request.id)
+    db.commit()
     return _to_out(request)
 
 
@@ -122,6 +127,8 @@ def resubmit_request(
     db.add(new_request)
     db.commit()
     db.refresh(new_request)
+    log_action(db, pensioner_id=pensioner.id, actor_id=pensioner.id, actor_role=pensioner.role, action="Bank change resubmitted", entity_type="BankChangeRequest", entity_id=new_request.id, before_value=str(original.id))
+    db.commit()
     return _to_out(new_request)
 
 
@@ -149,4 +156,6 @@ def escalate_request(
     request.escalated_at = datetime.utcnow()
     db.commit()
     db.refresh(request)
+    log_action(db, pensioner_id=pensioner.id, actor_id=pensioner.id, actor_role=pensioner.role, action="Bank change escalated", entity_type="BankChangeRequest", entity_id=request.id)
+    db.commit()
     return _to_out(request)

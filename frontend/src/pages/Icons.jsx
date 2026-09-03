@@ -126,3 +126,22 @@ export function ApproverIcon(props) {
     </svg>
   );
 }
+
+export function ReportIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M5 3.5h14v17H5z" />
+      <path d="M8.5 13.5v4M12 10.5v7M15.5 7.5v10" />
+    </svg>
+  );
+}
+
+export function AuditIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="11" cy="11" r="7" />
+      <path d="M16.2 16.2 21 21" />
+      <path d="M8.5 11h5M11 8.5v5" />
+    </svg>
+  );
+}

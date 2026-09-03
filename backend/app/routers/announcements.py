@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_pensioner, require_approver
 from app.database import get_db
+from app.events import log_action
 from app.models import Announcement, Faq, Pensioner
 from app.schemas import AnnouncementCreate, AnnouncementOut, FaqCreate, FaqOut
 
@@ -76,6 +77,8 @@ def create_announcement(
     db.add(announcement)
     db.commit()
     db.refresh(announcement)
+    log_action(db, pensioner_id=None, actor_id=officer.id, actor_role=officer.role, action="Announcement created", entity_type="Announcement", entity_id=announcement.id, after_value=payload.title)
+    db.commit()
     return announcement
 
 
@@ -96,6 +99,8 @@ def publish_announcement(
     announcement.published_by = officer.id
     db.commit()
     db.refresh(announcement)
+    log_action(db, pensioner_id=None, actor_id=officer.id, actor_role=officer.role, action="Announcement published", entity_type="Announcement", entity_id=announcement.id)
+    db.commit()
     return announcement
 
 

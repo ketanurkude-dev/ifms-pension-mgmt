@@ -61,6 +61,9 @@ export const hi = {
   "My requests": "मेरे अनुरोध",
   Announcements: "घोषणाएं",
   Approver: "अनुमोदक",
+  Reports: "रिपोर्ट",
+  "Select a report": "एक रिपोर्ट चुनें",
+  "Audit log": "ऑडिट लॉग",
   pensioner: "पेंशनभोगी",
   pension_officer: "पेंशन अधिकारी",
 
@@ -184,6 +187,7 @@ export const hi = {
   "New bank": "नया बैंक",
   "New account": "नया खाता",
   "Raised on": "उठाया गया",
+  "Application date": "आवेदन तिथि",
   "No bank change requests yet.": "अभी तक कोई बैंक परिवर्तन अनुरोध नहीं।",
   Withdraw: "वापस लें",
   Resubmit: "पुनः सबमिट करें",

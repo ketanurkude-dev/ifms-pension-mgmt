@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_pensioner, require_approver
 from app.database import get_db
+from app.events import log_action
 from app.models import LifeCertificate, Pensioner
 from app.schemas import (
     LifeCertificateCreate,
@@ -116,6 +117,8 @@ def submit_certificate(
     db.add(certificate)
     db.commit()
     db.refresh(certificate)
+    log_action(db, pensioner_id=pensioner.id, actor_id=pensioner.id, actor_role=pensioner.role, action="Life certificate submitted", entity_type="LifeCertificate", entity_id=certificate.id, after_value=certificate.status)
+    db.commit()
     return certificate
 
 
@@ -165,6 +168,8 @@ def verify_certificate(
     certificate.verified_at = datetime.utcnow()
     db.commit()
     db.refresh(certificate)
+    log_action(db, pensioner_id=certificate.pensioner_id, actor_id=officer.id, actor_role=officer.role, action="Life certificate verified", entity_type="LifeCertificate", entity_id=certificate.id)
+    db.commit()
     return certificate
 
 
@@ -189,4 +194,6 @@ def reject_certificate(
     certificate.review_remarks = payload.remarks
     db.commit()
     db.refresh(certificate)
+    log_action(db, pensioner_id=certificate.pensioner_id, actor_id=officer.id, actor_role=officer.role, action="Life certificate rejected", entity_type="LifeCertificate", entity_id=certificate.id, details=payload.remarks)
+    db.commit()
     return certificate

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { get, post } from "../api/apiService";
 import { useLanguage } from "../i18n/LanguageContext";
 import AppLayout from "./AppLayout";
+import ApplicationDateField from "./ApplicationDateField";
 import { StatusChip } from "./StatusChip";
 
 const emptyForm = { new_account_number: "", new_ifsc: "", new_bank_name: "", reason: "" };
@@ -57,6 +58,7 @@ export default function BankRequests() {
           </p>
 
           <form onSubmit={handleSubmit} className="grid sm:grid-cols-2 gap-4 max-w-2xl">
+            <ApplicationDateField />
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5" htmlFor="new_account_number">
                 {t("New account number")}

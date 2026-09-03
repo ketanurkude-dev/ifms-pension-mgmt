@@ -138,7 +138,7 @@ export default function Approver() {
                         {item.pensioner_name} &middot; {item.grievance_number}
                       </p>
                       <h3 className="font-medium text-slate-800">{t(item.category)}</h3>
-                      <p className="text-xs text-slate-400 mt-1">{t("Due")} {item.due_date}</p>
+                      <p className="text-xs text-slate-400 mt-1">{t("Lodged")} {item.server_date.slice(0, 10)} &middot; {t("Due")} {item.due_date}</p>
                     </div>
                     <div className="text-right shrink-0">
                       <StatusChip status={item.status} />

@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_pensioner
 from app.database import get_db
+from app.events import log_action
 from app.models import DisbursementRecord, Pensioner, TaxDeclaration, TaxDeclarationLine, TaxDocument
 from app.pdf import build_tax_document_pdf
 from app.schemas import (
@@ -218,6 +219,8 @@ def submit_declaration(
     declaration.tds_reference = f"TDS/{financial_year}/{pensioner.ppo_number}/v{declaration.version}"
     db.commit()
     db.refresh(declaration)
+    log_action(db, pensioner_id=pensioner.id, actor_id=pensioner.id, actor_role=pensioner.role, action="Tax declaration submitted", entity_type="TaxDeclaration", entity_id=declaration.id, after_value=financial_year)
+    db.commit()
     return _to_out(declaration, db, pensioner)
 
 
@@ -261,6 +264,7 @@ def revise_declaration(
                 proof_uploaded=old_line.proof_uploaded,
             )
         )
+    log_action(db, pensioner_id=pensioner.id, actor_id=pensioner.id, actor_role=pensioner.role, action="Tax declaration revised", entity_type="TaxDeclaration", entity_id=new_version.id, details=payload.reason)
     db.commit()
     return _to_out(new_version, db, pensioner)
 

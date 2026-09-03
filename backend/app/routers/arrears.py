@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_pensioner
 from app.database import get_db
+from app.events import log_action
 from app.models import AdjustmentEntry, ArrearCase, ArrearInstalment, BenefitClaimRequest, BenefitEntitlement, Pensioner
 from app.pdf import build_arrears_benefits_statement_pdf
 from app.schemas import (
@@ -189,6 +190,8 @@ def create_claim(
     db.add(claim)
     db.commit()
     db.refresh(claim)
+    log_action(db, pensioner_id=pensioner.id, actor_id=pensioner.id, actor_role=pensioner.role, action="Benefit claim raised", entity_type="BenefitClaimRequest", entity_id=claim.id, after_value=payload.benefit_type)
+    db.commit()
     return _claim_to_out(claim)
 
 
@@ -214,4 +217,6 @@ def escalate_claim(
     claim.escalated_at = datetime.utcnow()
     db.commit()
     db.refresh(claim)
+    log_action(db, pensioner_id=pensioner.id, actor_id=pensioner.id, actor_role=pensioner.role, action="Benefit claim escalated", entity_type="BenefitClaimRequest", entity_id=claim.id)
+    db.commit()
     return _claim_to_out(claim)

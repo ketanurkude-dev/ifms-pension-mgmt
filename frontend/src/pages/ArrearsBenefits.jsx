@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { downloadFile, get, post } from "../api/apiService";
 import { useLanguage } from "../i18n/LanguageContext";
 import AppLayout from "./AppLayout";
+import ApplicationDateField from "./ApplicationDateField";
 import { StatusChip } from "./StatusChip";
 
 const CLAIM_TYPES = [
@@ -256,6 +257,7 @@ export default function ArrearsBenefits() {
           </p>
 
           <form onSubmit={handleClaimSubmit} className="grid sm:grid-cols-2 gap-4 max-w-2xl mb-6">
+            <ApplicationDateField />
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-slate-700 mb-1.5" htmlFor="benefit_type">
                 {t("Benefit type")}

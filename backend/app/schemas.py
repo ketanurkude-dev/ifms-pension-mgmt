@@ -471,6 +471,30 @@ class ApproverQueueItem(BaseModel):
     item_type: str  # "bank_request" | "benefit_claim"
     pensioner_id: int
     pensioner_name: str
+    ppo_number: str | None = None
     title: str
+    description: str | None = None
+    new_account_number: str | None = None
+    new_ifsc: str | None = None
+    due_date: date | None = None
     status: str
     server_date: datetime
+
+
+class AuditLogOut(BaseModel):
+    id: int
+    pensioner_id: int | None
+    actor_id: int | None
+    actor_role: str | None
+    action: str
+    entity_type: str
+    entity_id: int | None
+    before_value: str | None
+    after_value: str | None
+    result: str
+    correlation_id: str | None
+    details: str | None
+    server_date: datetime
+
+    class Config:
+        from_attributes = True

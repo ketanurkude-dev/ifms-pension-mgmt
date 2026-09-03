@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_pensioner, require_approver
 from app.database import get_db
+from app.events import log_action
 from app.models import Grievance, GrievanceEvent, Pensioner
 from app.pdf import build_grievance_acknowledgement_pdf
 from app.schemas import (
@@ -128,6 +129,7 @@ def lodge_grievance(
     db.refresh(grievance)
 
     _log(db, grievance.id, "Lodged", None, pensioner.id)
+    log_action(db, pensioner_id=pensioner.id, actor_id=pensioner.id, actor_role=pensioner.role, action="Grievance lodged", entity_type="Grievance", entity_id=grievance.id, after_value=payload.category)
     db.commit()
     return _to_out(grievance, db)
 
@@ -226,6 +228,7 @@ def reopen_grievance(
     db.commit()
 
     _log(db, grievance.id, "Reopened", payload.reason, pensioner.id)
+    log_action(db, pensioner_id=pensioner.id, actor_id=pensioner.id, actor_role=pensioner.role, action="Grievance reopened", entity_type="Grievance", entity_id=grievance.id, details=payload.reason)
     db.commit()
     return _to_out(grievance, db)
 
@@ -248,6 +251,7 @@ def escalate_grievance(
     db.commit()
 
     _log(db, grievance.id, "Escalated", None, pensioner.id)
+    log_action(db, pensioner_id=pensioner.id, actor_id=pensioner.id, actor_role=pensioner.role, action="Grievance escalated", entity_type="Grievance", entity_id=grievance.id)
     db.commit()
     return _to_out(grievance, db)
 
@@ -345,5 +349,6 @@ def close_grievance(
     db.commit()
 
     _log(db, grievance.id, "Closed", payload.remarks, officer.id)
+    log_action(db, pensioner_id=grievance.pensioner_id, actor_id=officer.id, actor_role=officer.role, action="Grievance closed", entity_type="Grievance", entity_id=grievance.id, details=payload.remarks)
     db.commit()
     return {"message": "Grievance closed"}

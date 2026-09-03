@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.auth import create_token, decode_token, hash_password, verify_password
+from app.auth import create_token, decode_token, get_current_pensioner, hash_password, verify_password
 from app.config import settings
 from app.database import get_db
+from app.events import log_action
 from app.models import ROLES, Pensioner
 from app.schemas import LoginRequest, LoginResponse, RegisterRequest, TokenResponse, VerifyOtpRequest
 from app.seed import (
@@ -72,6 +73,7 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)):
 
     db.add_all(build_adjustment_entries(pensioner.id))
     db.add_all(build_benefit_entitlements(pensioner.id, pensioner.date_of_birth))
+    log_action(db, pensioner_id=pensioner.id, actor_id=pensioner.id, actor_role=role, action="Registered", entity_type="Pensioner", entity_id=pensioner.id)
     db.commit()
 
     return {"message": "Registration successful. You can now log in."}
@@ -85,11 +87,20 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
         .first()
     )
     if not pensioner or not verify_password(payload.password, pensioner.password_hash):
+        log_action(
+            db, pensioner_id=pensioner.id if pensioner else None, actor_id=pensioner.id if pensioner else None,
+            actor_role=pensioner.role if pensioner else None, action="Failed login", entity_type="Pensioner",
+            entity_id=pensioner.id if pensioner else None, result="Failure",
+            details=f"Attempted login for {payload.ppo_number}",
+        )
+        db.commit()
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid PPO number or password")
     if not pensioner.is_active:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account is inactive")
 
     pending_token = create_token(pensioner.ppo_number, purpose="otp_pending", expires_minutes=5)
+    log_action(db, pensioner_id=pensioner.id, actor_id=pensioner.id, actor_role=pensioner.role, action="Password verified", entity_type="Pensioner", entity_id=pensioner.id)
+    db.commit()
     return LoginResponse(pending_token=pending_token)
 
 
@@ -110,4 +121,13 @@ def verify_otp(payload: VerifyOtpRequest, db: Session = Depends(get_db)):
     access_token = create_token(
         pensioner.ppo_number, purpose="access", expires_minutes=settings.access_token_expire_minutes
     )
+    log_action(db, pensioner_id=pensioner.id, actor_id=pensioner.id, actor_role=pensioner.role, action="Login", entity_type="Pensioner", entity_id=pensioner.id)
+    db.commit()
     return TokenResponse(access_token=access_token)
+
+
+@router.post("/logout")
+def logout(pensioner: Pensioner = Depends(get_current_pensioner), db: Session = Depends(get_db)):
+    log_action(db, pensioner_id=pensioner.id, actor_id=pensioner.id, actor_role=pensioner.role, action="Logout", entity_type="Pensioner", entity_id=pensioner.id)
+    db.commit()
+    return {"message": "Logged out"}

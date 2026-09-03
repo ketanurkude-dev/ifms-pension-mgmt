@@ -6,12 +6,14 @@ import {
   AnnouncementIcon,
   ApproverIcon,
   ArrearsIcon,
+  AuditIcon,
   BankIcon,
   DashboardIcon,
   GrievanceIcon,
   HistoryIcon,
   LifeCertificateIcon,
   ProfileIcon,
+  ReportIcon,
   RequestsIcon,
   SlipIcon,
   TaxIcon,
@@ -29,6 +31,7 @@ const navItems = [
   { to: "/grievances", label: "Grievances", Icon: GrievanceIcon },
   { to: "/my-requests", label: "My requests", Icon: RequestsIcon },
   { to: "/announcements", label: "Announcements", Icon: AnnouncementIcon },
+  { to: "/reports", label: "Reports", Icon: ReportIcon },
 ];
 
 // Shared header + left sidebar nav for every page after login.
@@ -128,10 +131,16 @@ export default function AppLayout({ children }) {
                 </NavLink>
               ))}
               {isApprover && (
-                <NavLink to="/approver" className={approverLinkClass}>
-                  <ApproverIcon style={{ width: 18, height: 18 }} className="shrink-0" />
-                  {t("Approver")}
-                </NavLink>
+                <>
+                  <NavLink to="/approver" className={approverLinkClass}>
+                    <ApproverIcon style={{ width: 18, height: 18 }} className="shrink-0" />
+                    {t("Approver")}
+                  </NavLink>
+                  <NavLink to="/audit-log" className={approverLinkClass}>
+                    <AuditIcon style={{ width: 18, height: 18 }} className="shrink-0" />
+                    {t("Audit log")}
+                  </NavLink>
+                </>
               )}
             </nav>
           </aside>

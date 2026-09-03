@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { downloadFile, get, post } from "../api/apiService";
 import { useLanguage } from "../i18n/LanguageContext";
 import AppLayout from "./AppLayout";
+import ApplicationDateField from "./ApplicationDateField";
 import { StatusChip } from "./StatusChip";
 
 const emptyForm = { category: "", description: "", linked_reference_type: null, linked_reference_id: null };
@@ -93,6 +94,7 @@ export default function Grievances() {
           </p>
 
           <form onSubmit={handleSubmit} className="grid sm:grid-cols-2 gap-4 max-w-2xl">
+            <ApplicationDateField />
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-slate-700 mb-1.5" htmlFor="category">
                 {t("Category")}
