@@ -36,8 +36,8 @@ export default function AuthLayout({ title, subtitle, children }) {
         </p>
       </div>
 
-      <div className="w-full lg:w-1/2 h-full overflow-y-auto flex items-center justify-center p-6 sm:p-10">
-        <div className="w-full max-w-md">
+      <div className="w-full lg:w-1/2 h-full overflow-y-auto flex justify-center p-6 sm:p-10">
+        <div className="w-full max-w-md my-auto">
           <div className="flex items-center justify-between mb-8">
             <div className="lg:hidden flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-blue-800 text-white flex items-center justify-center text-sm font-semibold">
