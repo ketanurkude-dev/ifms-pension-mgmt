@@ -6,8 +6,8 @@ export default function AuthLayout({ title, subtitle, children }) {
   const { language, setLanguage, t } = useLanguage();
 
   return (
-    <div className="min-h-screen flex bg-slate-50">
-      <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-between bg-blue-900 p-12 text-white border-r border-blue-950">
+    <div className="h-screen flex bg-slate-50 overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 h-full relative flex-col justify-between bg-blue-900 p-12 text-white border-r border-blue-950">
         <div className="absolute top-0 left-0 w-full h-1.5 bg-orange-500" />
 
         <div>
@@ -36,7 +36,7 @@ export default function AuthLayout({ title, subtitle, children }) {
         </p>
       </div>
 
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10">
+      <div className="w-full lg:w-1/2 h-full overflow-y-auto flex items-center justify-center p-6 sm:p-10">
         <div className="w-full max-w-md">
           <div className="flex items-center justify-between mb-8">
             <div className="lg:hidden flex items-center gap-2">
