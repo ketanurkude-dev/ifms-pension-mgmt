@@ -6,8 +6,8 @@ Modeled on a GNCTD-style pensioner self-service SRS (bank-account change request
 life certificate submission, arrears/grievances, tax declarations).
 
 ## Stack & ports
-- Backend: FastAPI + SQLAlchemy 2.0 + PostgreSQL. Runs on **:8001**.
-- Frontend: React (Vite) + Tailwind CSS (strictly Tailwind, no inline CSS). Runs on **:5174**.
+- Backend: FastAPI + SQLAlchemy 2.0 + PostgreSQL. Runs on **:9002**.
+- Frontend: React (Vite) + Tailwind CSS (strictly Tailwind, no inline CSS). Runs on **:7002**.
 - DB: `postgresql+psycopg2://pension_portal:pension_portal@localhost:5432/pension_portal` (see
   `backend/.env`).
 - No migrations tool -- `Base.metadata.create_all()` on startup creates missing tables only.
